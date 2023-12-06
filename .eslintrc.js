@@ -1,9 +1,5 @@
 module.exports = {
-    settings: {
-        react: {
-            version: 'detect',
-        },
-    },
+    settings: { react: { version: 'detect', }, },
     env: {
         browser: true,
         es2021: true,
@@ -17,12 +13,8 @@ module.exports = {
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
-        cacheLifetime: {
-            glob: 'Infinity',
-        },
-        ecmaFeatures: {
-            jsx: true,
-        },
+        cacheLifetime: { glob: 'Infinity', },
+        ecmaFeatures: { jsx: true, },
         ecmaVersion: 'latest',
         sourceType: 'module',
     },
@@ -43,6 +35,22 @@ module.exports = {
             },
         ],
         '@stylistic/indent': ['error', 4],
-        '@stylistic/no-multiple-empty-lines': ['error', {max: 1 }],
+        '@stylistic/no-multiple-empty-lines': ['error', { max: 1 }],
+        '@stylistic/no-multi-spaces': ['error', { "ignoreEOLComments": false }],
+        '@stylistic/semi': ['error', 'never'],
+        '@stylistic/eol-last': ['error', 'always'],
+        '@stylistic/object-curly-spacing': ['error', 'always'],
+        '@stylistic/object-curly-newline': ["error", { "multiline": true }],
+        '@stylistic/space-before-blocks': ['error', 'always'],
+        '@stylistic/space-infix-ops': ['error', { "int32Hint": false }],
+        '@stylistic/space-unary-ops': [
+            'error', {
+                "words": true,
+                "nonwords": true,
+                "overrides": {
+                    "new": true,
+                    "++": true
+                }
+            }]
     },
-};
+}
