@@ -1,9 +1,9 @@
 {
-  "name": "<Application Name>",
-  "short_name": "<Application Short Name>",
-  "theme_color": "#1976d2",
+  "name": "Pokemon-demo",
+  "short_name": "Pokemon",
+  "theme_color": "#c7a008",
   "background_color": "#fafafa",
-  "display": "standalone",
+  "display": "fullscreen",
   "scope": "./",
   "start_url": "./",
   "icons": [
