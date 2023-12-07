@@ -1,10 +1,12 @@
 import { PropsWithChildren, memo,useEffect } from "react"
 import { useDispatch } from "react-redux"
 import axios, { AxiosResponse } from "axios"
+import { Inter } from "next/font/google"
 
 import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
 
 import { IPokemonsData } from "types"
+const inter = Inter({ subsets: ['latin'] })
 
 const RootLayout = memo(({ children }: PropsWithChildren)=>{
     const dispatch = useDispatch()
@@ -27,7 +29,11 @@ const RootLayout = memo(({ children }: PropsWithChildren)=>{
         fetchAllPokemons()
     }, [])
 
-    return children
+    return (
+        <main className={`flex min-h-screen flex-col justify-normal py-6 px-12 ${inter.className}`}>
+            {children}
+        </main>
+    )
 })
 
 RootLayout.displayName = 'RootLayout'
