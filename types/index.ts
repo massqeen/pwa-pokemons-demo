@@ -32,6 +32,13 @@ export interface ISprite extends IBasicSprite {
     }
 }
 
+export interface IAbility {
+    is_hidden: boolean
+    ability: {
+        name: string
+    }
+}
+
 export interface IPokemonDetails {
     id:number
     name:string
@@ -39,4 +46,5 @@ export interface IPokemonDetails {
     height: number
     weight: number
     sprites: ISprite
+    abilities: IAbility[]
 }
