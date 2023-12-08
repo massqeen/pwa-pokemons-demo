@@ -8,7 +8,7 @@ import { IPokemonDetails } from "types"
 const PokemonDetailsCard = dynamic(
     () => import('components/cards/PokemonDetailsCard'),
     {
-        ssr: false,
+        ssr: true,
         loading: () => (
             <p>Loading...</p>
         ),
@@ -43,7 +43,7 @@ export default function PokemonDetailsPage() {
     return (
         <>
             <h1>Pokemon details</h1>
-            {details && <PokemonDetailsCard details={details}/>}
+            {details ? <PokemonDetailsCard details={details}/> : <p>No data</p>}
         </>
     )
 }
