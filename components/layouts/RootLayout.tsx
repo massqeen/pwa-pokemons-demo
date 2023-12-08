@@ -30,7 +30,7 @@ const RootLayout = memo(({ children }: PropsWithChildren)=>{
     }, [])
 
     return (
-        <main className={`flex min-h-screen flex-col justify-normal py-6 px-12 ${inter.className}`}>
+        <main className={`flex min-h-screen flex-col justify-normal py-4 px-8 lg:py-6 lg:px-12 ${inter.className}`}>
             {children}
         </main>
     )
