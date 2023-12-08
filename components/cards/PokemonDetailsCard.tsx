@@ -32,7 +32,7 @@ const PokemonDetailsCard = ({ details }:IProps) => {
                     <p className="font-mono italic text-sm">
                         Weight: <span className='font-normal not-italic'>{weight}</span>
                     </p>
-                    <p className="flex font-mono italic text-sm">
+                    <div className="flex font-mono italic text-sm">
                         Abilities:
                         <ul className='ms-2'>
                             {abilities.map(({ is_hidden,ability }, index)=>
@@ -45,7 +45,7 @@ const PokemonDetailsCard = ({ details }:IProps) => {
                             )
                             }
                         </ul>
-                    </p>
+                    </div>
                     {sprites?.other["official-artwork"]?.front_default &&
                         <Image
                             src={sprites?.other["official-artwork"]?.front_default}
