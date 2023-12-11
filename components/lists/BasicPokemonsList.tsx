@@ -30,7 +30,6 @@ const BasicPokemonsList = ({ pokemons }:IProps) =>{
                         {query ?
                             <Link
                                 href={`/details/${getQueryPID(url)}`}
-                                prefetch={false}
                             >
                                 {capitalizeFirstLetter(name)}
                             </Link>
