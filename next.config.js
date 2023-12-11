@@ -1,6 +1,6 @@
 // @ts-check
 
-const withPWA = require('next-pwa')({
+const withPWA = require("@ducanh2912/next-pwa").default({
     dest: 'public',
     disable: process.env.NODE_ENV === 'development',
     cacheStartUrl: true,
@@ -31,7 +31,7 @@ const withPWA = require('next-pwa')({
                         maxEntries: 1000,
                         maxAgeSeconds: 48 * 60 * 60, // 48 hours
                     },
-                    networkTimeoutSeconds: 10, // fallback to cache if API does not response within 10 seconds
+                    // networkTimeoutSeconds: 10, // fallback to cache if API does not response within 10 seconds
                 },
             },
         ],
