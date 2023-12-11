@@ -1,15 +1,14 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { useDebouncedCallback } from 'use-debounce'
 
 interface IProps {
-    debounceTimeout: number;
+    debounceTimeout: number
+    defaultValue?: string
     onSearch: (value: string) => void
 }
 
-const SearchInput = ({ debounceTimeout,onSearch }:IProps) => {
-
-    const [value, setValue] = useState<string>('')
-
+const SearchInput = ({ debounceTimeout, defaultValue = '', onSearch }:IProps) => {
+    const [value, setValue] = useState<string>(defaultValue)
     const onChange = (e:ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value)
         debouncedOnSearch(e.target.value)
@@ -22,6 +21,13 @@ const SearchInput = ({ debounceTimeout,onSearch }:IProps) => {
         debounceTimeout, { leading: true }
     )
 
+    useEffect(() => {
+        if(defaultValue) {
+            setValue(defaultValue)
+            debouncedOnSearch(defaultValue)
+        }
+    }, [defaultValue])
+
     return (
         <div
             className="max-w-xs my-4">
@@ -32,7 +38,7 @@ const SearchInput = ({ debounceTimeout,onSearch }:IProps) => {
                 <input
                     value={value}
                     type="text"
-                    placeholder="Search"
+                    placeholder="Search by name"
                     className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
                     onChange={onChange}
                 />

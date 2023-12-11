@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
+import { useRouter } from "next/router"
 import dynamic from 'next/dynamic'
+import { usePathname, useSearchParams } from "next/navigation"
 import axios from "axios"
 import { Online } from "react-detect-offline"
 
@@ -8,6 +10,7 @@ import { fetchPokemonDetails } from "pages/details/pokemon/[pid]"
 
 import { RootState } from "redux/store"
 import { IPokemonDetails } from "types"
+import { NextPage } from "next"
 
 const SearchInput = dynamic(
     () => import('components/base/SearchInput'),
@@ -35,7 +38,7 @@ const BasicPokemonsList = dynamic(
 
 const paginationPerPage = 15
 
-export default function Home() {
+const HomePage: NextPage = () => {
     const { pokemons } = useSelector(
         ({ app }: RootState) => ({ pokemons:app.pokemons })
     )
@@ -44,10 +47,23 @@ export default function Home() {
     const [paginationOffset, setPaginationOffset] = useState<number>(0)
     const [isDownloading, setIsDownloading] = useState<boolean>(false)
 
-    const foundPokemons = useMemo(() => {
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
+    const { replace } = useRouter()
+
+    const queryFromSearchParam = searchParams.get('query')
+    const pageFromSearchParam = Number(searchParams.get('page')) || 1
+
+    const findPokemonsByQuery = (query:string)=>{
         if(! query || ! pokemons ) return pokemons
 
         return pokemons.filter(({ name })=>name.includes(query))
+    }
+
+    const foundPokemons = useMemo(() => {
+        if(! query || ! pokemons ) return pokemons
+
+        return findPokemonsByQuery(query)
     }, [query, pokemons])
 
     const paginatedPokemons = useMemo(() => {
@@ -59,31 +75,59 @@ export default function Home() {
     }, [foundPokemons, paginationOffset])
 
     const onSearchPokemonByName = (value: string)=>{
+        const params = new URLSearchParams(searchParams)
         setQuery(value)
-        setPaginationOffset(0)
+
+        if (value) {
+            params.set('query', value)
+        } else {
+            params.delete('query')
+        }
+
+        const foundPokemons = findPokemonsByQuery(value)
+        if(foundPokemons && foundPokemons?.length > (pageFromSearchParam - 1) * paginationPerPage) {
+            setPaginationOffset((pageFromSearchParam - 1) * paginationPerPage)
+            params.set('page', pageFromSearchParam.toString())
+        } else {
+            setPaginationOffset(0)
+            params.set('page', '1')
+        }
+
+        replace(`${pathname}?${params.toString()}`)
     }
 
-    const onChangePage = (offset: number) =>{
+    const onChangePage = (offset: number, page: number) =>{
+        const params = new URLSearchParams(searchParams)
+        params.set('page', page.toString())
+        if(queryFromSearchParam) {
+            params.set('query',queryFromSearchParam)
+        }
         setPaginationOffset(offset)
+        replace(`${pathname}?${params.toString()}`)
     }
 
     const fetchAllPokemonDetails = async()=>{
         const allDetails:IPokemonDetails[] = []
         if(! pokemons || pokemons.length === 0) return allDetails
+
         for (const { url } of pokemons) {
             const index = url.indexOf('pokemon')
+
             if(index !== - 1) {
                 let id = url.substring(index + 8)
                 id = id.slice(0, - 1)
                 const details:IPokemonDetails | undefined = await fetchPokemonDetails(id)
+
                 if(details) {
                     const urls:string[] = []
+
                     if(details.sprites?.front_default) {
                         urls.push(details.sprites.front_default)
                     }
                     if(details.sprites?.other["official-artwork"]?.front_default) {
                         urls.push(details.sprites.other["official-artwork"].front_default)
                     }
+
                     const imageRequests = urls.map((url) => axios.get(url))
                     await axios.all(imageRequests)
                     allDetails.push(details)
@@ -99,6 +143,11 @@ export default function Home() {
         await fetchAllPokemonDetails().then(()=>{
             setIsDownloading(false)})
     }
+
+    useEffect(() => {
+        if(pageFromSearchParam === 1) return
+        setPaginationOffset((pageFromSearchParam - 1) * paginationPerPage)
+    }, [pageFromSearchParam])
 
     return (
         <>
@@ -125,11 +174,25 @@ export default function Home() {
                 </button>
             </Online>
 
-            <SearchInput debounceTimeout={500} onSearch={onSearchPokemonByName}/>
+            <SearchInput
+                debounceTimeout={500}
+                defaultValue={queryFromSearchParam ?? ''}
+                onSearch={onSearchPokemonByName}
+            />
 
-            <Pagination records={foundPokemons ?? []} perPage={paginationPerPage} onChangePage={onChangePage}>
-                <BasicPokemonsList pokemons={paginatedPokemons} doDisableLinks={isDownloading}/>
+            <Pagination
+                records={foundPokemons ?? []}
+                defaultPage={pageFromSearchParam}
+                perPage={paginationPerPage}
+                onChangePage={onChangePage}
+            >
+                <BasicPokemonsList
+                    pokemons={paginatedPokemons}
+                    doDisableLinks={isDownloading}
+                />
             </Pagination>
         </>
     )
 }
+
+export default HomePage

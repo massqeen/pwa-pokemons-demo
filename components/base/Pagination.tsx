@@ -2,13 +2,14 @@ import { PropsWithChildren, useEffect, useMemo, useState } from "react"
 
 interface IProps {
     records: unknown[]
+    defaultPage?: number
     perPage?: number
     doHideIfOnePage?: boolean
-    onChangePage: (offset: number, perPage: number) => void
+    onChangePage: (offset: number, page: number) => void
 }
 
-const Pagination = ({ children, records, perPage = 10, doHideIfOnePage = true, onChangePage }: PropsWithChildren<IProps>) => {
-    const [currentPage, setCurrentPage] = useState<number>(1)
+const Pagination = ({ children, records, defaultPage = 1,perPage = 10, doHideIfOnePage = true, onChangePage }: PropsWithChildren<IProps>) => {
+    const [currentPage, setCurrentPage] = useState<number>(defaultPage)
 
     const pageQuantity = useMemo(() => {
         if(perPage === 0 || records.length === 0) return 1
@@ -19,7 +20,7 @@ const Pagination = ({ children, records, perPage = 10, doHideIfOnePage = true, o
     const onPrevious = ()=>{
         if(currentPage === 1) return
         setCurrentPage((prev)=> {
-            onChangePage((prev - 2) * perPage, perPage)
+            onChangePage((prev - 2) * perPage, prev - 1)
 
             return prev -= 1
         })
@@ -29,15 +30,19 @@ const Pagination = ({ children, records, perPage = 10, doHideIfOnePage = true, o
     const onNext = ()=>{
         if(currentPage === pageQuantity) return
         setCurrentPage((prev)=> {
-            onChangePage((prev) * perPage, perPage)
+            onChangePage((prev) * perPage, prev + 1)
 
             return prev += 1
         })
     }
 
     useEffect(() => {
-        setCurrentPage(1)
-    }, [pageQuantity])
+        if(defaultPage <= pageQuantity) {
+            setCurrentPage(defaultPage)
+        } else {
+            setCurrentPage(1)
+        }
+    }, [pageQuantity, defaultPage])
 
     return (
         <>
