@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import dynamic from 'next/dynamic'
+import axios from "axios"
 import { Online } from "react-detect-offline"
 
 import { fetchPokemonDetails } from "pages/details/pokemon/[pid]"
@@ -69,13 +70,22 @@ export default function Home() {
     const fetchAllPokemonDetails = async()=>{
         const allDetails:IPokemonDetails[] = []
         if(! pokemons || pokemons.length === 0) return allDetails
-        for (let i = 0; i < pokemons.length ; i ++) {
-            const index = pokemons[i].url.indexOf('pokemon')
+        for (const { url } of pokemons) {
+            const index = url.indexOf('pokemon')
             if(index !== - 1) {
-                let id = pokemons[i].url.substring(index + 8)
+                let id = url.substring(index + 8)
                 id = id.slice(0, - 1)
                 const details:IPokemonDetails | undefined = await fetchPokemonDetails(id)
                 if(details) {
+                    const urls:string[] = []
+                    if(details.sprites?.front_default) {
+                        urls.push(details.sprites.front_default)
+                    }
+                    if(details.sprites?.other["official-artwork"]?.front_default) {
+                        urls.push(details.sprites.other["official-artwork"].front_default)
+                    }
+                    const imageRequests = urls.map((url) => axios.get(url))
+                    await axios.all(imageRequests)
                     allDetails.push(details)
                 }
             }
@@ -118,7 +128,7 @@ export default function Home() {
             <SearchInput debounceTimeout={500} onSearch={onSearchPokemonByName}/>
 
             <Pagination records={foundPokemons ?? []} perPage={paginationPerPage} onChangePage={onChangePage}>
-                <BasicPokemonsList pokemons={paginatedPokemons}/>
+                <BasicPokemonsList pokemons={paginatedPokemons} doDisableLinks={isDownloading}/>
             </Pagination>
         </>
     )
