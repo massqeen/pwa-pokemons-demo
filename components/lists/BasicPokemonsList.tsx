@@ -6,9 +6,10 @@ import { IPokemon } from "types"
 
 interface IProps {
     pokemons: IPokemon[] | null
+    doDisableLinks?: boolean
 }
 
-const BasicPokemonsList = ({ pokemons }:IProps) =>{
+const BasicPokemonsList = ({ pokemons, doDisableLinks = false }:IProps) =>{
     const getQueryPID = (url:string)=>{
         const index = url.indexOf('pokemon')
         if(index === - 1) return ''
@@ -27,13 +28,13 @@ const BasicPokemonsList = ({ pokemons }:IProps) =>{
 
                 return (
                     <li key={`${name}${index}`}>
-                        {query ?
+                        {(query && ! doDisableLinks) ?
                             <Link
                                 href={`/details/${getQueryPID(url)}`}
                             >
                                 {capitalizeFirstLetter(name)}
                             </Link>
-                            : <span>{name}</span>
+                            : <span>{capitalizeFirstLetter(name)}</span>
                         }
                     </li>
                 )
