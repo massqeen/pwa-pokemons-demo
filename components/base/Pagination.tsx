@@ -43,10 +43,10 @@ const Pagination = ({ children, records, perPage = 10, doHideIfOnePage = true, o
         <>
             {children}
             {(pageQuantity !== 1 || ! doHideIfOnePage) &&
-                <div className="mt-6 px-2 text-gray-600 dark:text-white lg:px-8 lg:mt-12">
+                <div className="mt-6 text-gray-600 dark:text-white lg:px-8 lg:mt-12">
                     <div className="flex items-center justify-between text-sm font-medium">
                         <button
-                            className="px-4 py-2 border border-gray-800 dark:border-white rounded-lg duration-150
+                            className="px-4 py-2 min-w-[90px] border border-gray-800 dark:border-white rounded-lg duration-150
                         hover:bg-gray-300 hover:dark:bg-neutral-700 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                             disabled={currentPage === 1}
                             onClick={onPrevious}
@@ -57,7 +57,7 @@ const Pagination = ({ children, records, perPage = 10, doHideIfOnePage = true, o
                         Page {currentPage} of {pageQuantity}
                         </div>
                         <button
-                            className="px-4 py-2 border border-gray-800 dark:border-white rounded-lg duration-150
+                            className="px-4 py-2 min-w-[90px] border border-gray-800 dark:border-white rounded-lg duration-150
                         hover:bg-gray-300 hover:dark:bg-neutral-700 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                             disabled={currentPage === pageQuantity}
                             onClick={onNext}
