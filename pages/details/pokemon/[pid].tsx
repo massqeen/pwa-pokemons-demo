@@ -15,6 +15,15 @@ const PokemonDetailsCard = dynamic(
     }
 )
 
+export const fetchPokemonDetails = async(id:string, onSuccess?:(data:IPokemonDetails)=>void)=> {
+    const result:AxiosResponse<IPokemonDetails> = await axios.get(`/pokemon/${id}`)
+    if(result?.data && onSuccess) {
+        onSuccess(result.data)
+    } else if(result?.data) {
+        return result.data
+    }
+}
+
 export default function PokemonDetailsPage() {
     const router = useRouter()
 
@@ -28,16 +37,9 @@ export default function PokemonDetailsPage() {
         [router.query.pid]
     )
 
-    const fetchPokemonDetails = async(id:string)=> {
-        const result:AxiosResponse<IPokemonDetails> = await axios.get(`/pokemon/${id}`)
-        if(result?.data) {
-            setDetails(result.data)
-        }
-    }
-
     useEffect(() => {
         if(! pokemonId) return
-        fetchPokemonDetails(pokemonId)
+        fetchPokemonDetails(pokemonId, setDetails)
     }, [pokemonId])
 
     return (
