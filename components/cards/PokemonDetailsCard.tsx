@@ -17,9 +17,10 @@ const PokemonDetailsCard = ({ details }:IProps) => {
                     {sprites.front_default &&
                         <Image
                             src={sprites.front_default}
-                            alt={`${name} icon`}
+                            alt='Icon'
                             width={64}
                             height={64}
+                            priority
                             className='rounded-full border-solid border border-slate-900 dark:border-amber-50'
                         />
                     }
@@ -47,12 +48,12 @@ const PokemonDetailsCard = ({ details }:IProps) => {
                         </ul>
                     </div>
                     {sprites?.other["official-artwork"]?.front_default &&
-                        <Image
-                            src={sprites?.other["official-artwork"]?.front_default}
-                            alt='official artwork'
-                            width={300}
-                            height={300}
-                        />
+                            <img
+                                src={sprites?.other["official-artwork"]?.front_default}
+                                alt='Official artwork'
+                                width={300}
+                                height={300}
+                            />
                     }
                 </div>
             </div>
