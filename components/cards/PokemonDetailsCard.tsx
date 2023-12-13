@@ -1,6 +1,6 @@
-import Image from 'next/image'
+import { capitalizeFirstLetter } from "services/utils"
+
 import { IPokemonDetails } from "types"
-import { capitalizeFirstLetter } from "../../services/utils"
 
 interface IProps {
     details: IPokemonDetails
@@ -15,12 +15,11 @@ const PokemonDetailsCard = ({ details }:IProps) => {
             <div className="">
                 <div className="space-y-2">
                     {sprites.front_default &&
-                        <Image
+                        <img
                             src={sprites.front_default}
                             alt='Icon'
                             width={64}
                             height={64}
-                            priority
                             className='rounded-full border-solid border border-slate-900 dark:border-amber-50'
                         />
                     }
