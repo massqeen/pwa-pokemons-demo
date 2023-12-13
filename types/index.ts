@@ -1,3 +1,5 @@
+export const DEFAULT_POKEMONS_PER_REQUEST = 200
+
 export interface IPokemonsMeta {
     count: number
     next: string | null

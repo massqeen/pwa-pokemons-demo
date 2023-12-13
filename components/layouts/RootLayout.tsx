@@ -6,19 +6,31 @@ import { Offline } from "react-detect-offline"
 
 import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
 
-import { IPokemonsData } from "types"
+import { DEFAULT_POKEMONS_PER_REQUEST, IPokemonsData } from "types"
+
 const inter = Inter({ subsets: ['latin'] })
+
+export const fetchPokemonsList = async(
+    limit = DEFAULT_POKEMONS_PER_REQUEST,
+    nextUrl?: string,
+    onSuccess?:(data: IPokemonsData)=>void)=> {
+    const requestUrl = nextUrl ? nextUrl : `/pokemon/?limit=${limit}`
+    const result:AxiosResponse<IPokemonsData> = await axios.get(requestUrl)
+
+    if(result?.data && onSuccess) {
+        onSuccess(result.data)
+    } else if(result?.data) {
+        return result.data
+    }
+}
 
 const RootLayout = memo(({ children }: PropsWithChildren)=>{
     const dispatch = useDispatch()
 
-    const fetchAllPokemons = async(limit = 100)=> {
-        const result:AxiosResponse<IPokemonsData> = await axios.get(`/pokemon/?limit=${limit}`)
-        if(result?.data) {
-            const { results,count,next,previous } = result.data
-            dispatch(setPokemons(results))
-            dispatch(setPokemonsMeta({ count,next,previous }))
-        }
+    const onGetPokemonsList = (data:IPokemonsData)=>{
+        const { results,count,next,previous } = data
+        dispatch(setPokemons(results))
+        dispatch(setPokemonsMeta({ count,next,previous }))
     }
 
     const initAxios = ()=>{
@@ -27,7 +39,7 @@ const RootLayout = memo(({ children }: PropsWithChildren)=>{
 
     useEffect(() => {
         initAxios()
-        fetchAllPokemons()
+        fetchPokemonsList(DEFAULT_POKEMONS_PER_REQUEST,'', onGetPokemonsList)
     }, [])
 
     return (
