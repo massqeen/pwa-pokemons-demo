@@ -13,7 +13,11 @@ export const appSlice = createSlice({
     initialState, 
     reducers: {
         setPokemons: (state, { payload }: PayloadAction<IPokemon[] | null>) => {
-            state.pokemons = payload
+            if(! payload || ! state.pokemons) {
+                state.pokemons = payload
+            } else {
+                state.pokemons = [...state.pokemons, ...payload]
+            }
         },
         setPokemonsMeta: (state, { payload }: PayloadAction<IPokemonsMeta | null>) => {
             state.pokemonsMeta = payload
