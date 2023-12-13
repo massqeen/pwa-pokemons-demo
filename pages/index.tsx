@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import dynamic from 'next/dynamic'
 import { usePathname, useSearchParams } from "next/navigation"
 import axios from "axios"
 import { Online } from "react-detect-offline"
+import { NextPage } from "next"
+
+import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
 
 import { fetchPokemonDetails } from "pages/details/pokemon/[pid]"
+import { fetchPokemonsList } from "components/layouts/RootLayout"
 
 import { RootState } from "redux/store"
-import { IPokemonDetails } from "types"
-import { NextPage } from "next"
+import { DEFAULT_POKEMONS_PER_REQUEST, IPokemonDetails } from "types"
 
 const SearchInput = dynamic(
     () => import('components/base/SearchInput'),
@@ -39,8 +42,15 @@ const BasicPokemonsList = dynamic(
 const paginationPerPage = 15
 
 const HomePage: NextPage = () => {
-    const { pokemons } = useSelector(
-        ({ app }: RootState) => ({ pokemons:app.pokemons })
+    const dispatch = useDispatch()
+
+    const { pokemons,nextPokemonsUrl } = useSelector(
+        ({ app }: RootState) => (
+            {
+                pokemons: app.pokemons,
+                nextPokemonsUrl: app.pokemonsMeta?.next ?? null
+            }
+        )
     )
 
     const [query, setQuery] = useState<string>('')
@@ -144,8 +154,21 @@ const HomePage: NextPage = () => {
             setIsDownloading(false)})
     }
 
+    const onGetMorePokemons = async ()=>{
+        const data = await fetchPokemonsList(DEFAULT_POKEMONS_PER_REQUEST, nextPokemonsUrl as string)
+        if(! data) return
+        const { results,count,next,previous } = data
+        dispatch(setPokemons(results))
+        dispatch(setPokemonsMeta({ count,next,previous }))
+    }
+
     useEffect(() => {
-        if(pageFromSearchParam === 1) return
+        const totalPages = ! pokemons || pokemons.length === 0
+            ? 1
+            : Math.ceil(pokemons.length / paginationPerPage)
+
+        if(pageFromSearchParam === 1 || pageFromSearchParam > totalPages) return
+
         setPaginationOffset((pageFromSearchParam - 1) * paginationPerPage)
     }, [pageFromSearchParam])
 
@@ -155,7 +178,8 @@ const HomePage: NextPage = () => {
 
             <Online>
                 <button
-                    className="flex justify-center content-center max-w-xs mt-2 p-2 dark:text-black border border-yellow-500 bg-yellow-200 rounded-lg duration-150 shadow-md
+                    className="flex justify-center content-center max-w-xs mt-2 p-2 dark:text-black border
+                        border-yellow-500 bg-yellow-200 rounded-lg duration-150 shadow-md
                         hover:bg-yellow-100 disabled:cursor-not-allowed"
                     disabled={isDownloading}
                     onClick={onDownloadAllDetails}
@@ -191,6 +215,19 @@ const HomePage: NextPage = () => {
                     doDisableLinks={isDownloading}
                 />
             </Pagination>
+
+            <Online>
+                {nextPokemonsUrl &&
+                    <button
+                        className="mt-6 px-4 py-2 max-w-xs border border-gray-800 dark:border-white rounded-lg duration-150
+                            shadow-md hover:bg-gray-300 hover:dark:bg-neutral-700 disabled:cursor-not-allowed
+                            disabled:hover:bg-transparent"
+                        onClick={onGetMorePokemons}
+                    >
+                        Load more
+                    </button>
+                }
+            </Online>
         </>
     )
 }
