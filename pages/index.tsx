@@ -56,7 +56,8 @@ const HomePage: NextPage = () => {
 
     const [query, setQuery] = useState<string>('')
     const [paginationOffset, setPaginationOffset] = useState<number>(0)
-    const [isDownloading, setIsDownloading] = useState<boolean>(false)
+    const [isDownloadingContent, setIsDownloadingContent] = useState<boolean>(false)
+    const [arePokemonsLoading, setArePokemonsLoading] = useState<boolean>(false)
 
     const { online } = useNetwork()
     const searchParams = useSearchParams()
@@ -211,10 +212,16 @@ const HomePage: NextPage = () => {
                 perPage={paginationPerPage}
                 onChangePage={onChangePage}
             >
-                <BasicPokemonsList
-                    pokemons={paginatedPokemons}
-                    doDisableLinks={isDownloading}
-                />
+                {arePokemonsLoading && (! pokemons || pokemons.length === 0) ?
+                    <p>Loading...</p> :
+                    pokemons ?
+                        <BasicPokemonsList
+                            pokemons={paginatedPokemons}
+                            doDisableLinks={isDownloadingContent}
+                        />
+                        : <p>No data</p>
+                }
+
             </Pagination>
 
             {online && nextPokemonsUrl &&
@@ -224,6 +231,17 @@ const HomePage: NextPage = () => {
                             disabled:hover:bg-transparent"
                         onClick={onGetMorePokemons}
                     >
+                        {arePokemonsLoading &&
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="rgb(245 158 11)"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135
+                            5.824 3 7.938l3-2.647z"
+                                >
+                                </path>
+                            </svg>}
                         Load more
                     </button>
             }
