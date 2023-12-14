@@ -4,8 +4,9 @@ import { useRouter } from "next/router"
 import dynamic from 'next/dynamic'
 import { usePathname, useSearchParams } from "next/navigation"
 import axios from "axios"
-import { Online } from "react-detect-offline"
 import { NextPage } from "next"
+
+import useNetwork from "hooks/useNetwork"
 
 import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
 
@@ -39,7 +40,7 @@ const BasicPokemonsList = dynamic(
     }
 )
 
-const paginationPerPage = 15
+const paginationPerPage = 10
 
 const HomePage: NextPage = () => {
     const dispatch = useDispatch()
@@ -57,6 +58,7 @@ const HomePage: NextPage = () => {
     const [paginationOffset, setPaginationOffset] = useState<number>(0)
     const [isDownloading, setIsDownloading] = useState<boolean>(false)
 
+    const { online } = useNetwork()
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -176,15 +178,15 @@ const HomePage: NextPage = () => {
         <>
             <h1>Pokemons</h1>
 
-            <Online>
-                <button
-                    className="flex justify-center content-center max-w-xs mt-2 p-2 dark:text-black border
+            {online && <button
+                className="flex justify-center content-center max-w-xs mt-2 p-2 dark:text-black border
                         border-yellow-500 bg-yellow-200 rounded-lg duration-150 shadow-md
                         hover:bg-yellow-100 disabled:cursor-not-allowed"
-                    disabled={isDownloading}
-                    onClick={onDownloadAllDetails}
-                >
-                    {isDownloading && <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                disabled={isDownloading}
+                onClick={onDownloadAllDetails}
+            >
+                {isDownloading &&
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                             strokeWidth="4"></circle>
@@ -194,9 +196,8 @@ const HomePage: NextPage = () => {
                         >
                         </path>
                     </svg>}
-                    Download offline content
-                </button>
-            </Online>
+                Download offline content
+            </button>}
 
             <SearchInput
                 debounceTimeout={500}
@@ -216,8 +217,7 @@ const HomePage: NextPage = () => {
                 />
             </Pagination>
 
-            <Online>
-                {nextPokemonsUrl &&
+            {online && nextPokemonsUrl &&
                     <button
                         className="mt-6 px-4 py-2 max-w-xs border border-gray-800 dark:border-white rounded-lg duration-150
                             shadow-md hover:bg-gray-300 hover:dark:bg-neutral-700 disabled:cursor-not-allowed
@@ -226,8 +226,7 @@ const HomePage: NextPage = () => {
                     >
                         Load more
                     </button>
-                }
-            </Online>
+            }
         </>
     )
 }

@@ -2,7 +2,8 @@ import { PropsWithChildren, memo,useEffect } from "react"
 import { useDispatch } from "react-redux"
 import axios, { AxiosResponse } from "axios"
 import { Inter } from "next/font/google"
-import { Offline } from "react-detect-offline"
+
+import useNetwork from "hooks/useNetwork"
 
 import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
 
@@ -26,6 +27,7 @@ export const fetchPokemonsList = async(
 
 const RootLayout = memo(({ children }: PropsWithChildren)=>{
     const dispatch = useDispatch()
+    const { online } = useNetwork()
 
     const onGetPokemonsList = (data:IPokemonsData)=>{
         const { results,count,next,previous } = data
@@ -43,9 +45,9 @@ const RootLayout = memo(({ children }: PropsWithChildren)=>{
     }, [])
 
     return (
-        <main className={`flex min-h-screen flex-col justify-normal py-4 px-8 lg:py-6 lg:px-12 ${inter.className}`}>
+        <main className={`flex min-h-screen flex-col justify-normal py-8 px-8 lg:py-6 lg:px-12 ${inter.className}`}>
             <div className='text-center text-orange-500 font-semibold'>
-                <Offline >You are offline!</Offline>
+                {! online && <p>You are offline!</p>}
             </div>
             {children}
         </main>
