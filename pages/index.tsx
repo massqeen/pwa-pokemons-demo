@@ -107,7 +107,7 @@ const HomePage: NextPage = () => {
 
     const onSearchPokemonByName = (value: string)=>{
         const params = new URLSearchParams(searchParams)
-        setQuery(value)
+        setQuery(value.toLowerCase())
 
         if (value) {
             params.set('query', value)

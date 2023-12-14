@@ -9,7 +9,7 @@ Main features include:
     
     Manual offline content download functionality
 
-    Online and offline detection (thanks to react-detect-offline) 
+    Online and offline detection 
 
     Code splitting, including dynamic component imports (using Next)
     
