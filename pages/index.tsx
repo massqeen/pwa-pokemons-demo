@@ -210,9 +210,10 @@ const HomePage: NextPage = () => {
     }, [pageFromSearchParam])
 
     useEffect(() => {
+        if(pokemons && pokemons.length > 0) return
         // to fix race condition with axios initialization in RootLayout
         setTimeout(() =>{ onFetchPokemons()},0)
-    }, [])
+    }, [pokemons])
 
     return (
         <>
