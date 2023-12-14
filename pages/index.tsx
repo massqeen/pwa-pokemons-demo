@@ -3,18 +3,18 @@ import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import dynamic from 'next/dynamic'
 import { usePathname, useSearchParams } from "next/navigation"
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import { NextPage } from "next"
 
 import useNetwork from "hooks/useNetwork"
+import { sleep } from "services/utils"
 
 import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
 
 import { fetchPokemonDetails } from "pages/details/pokemon/[pid]"
-import { fetchPokemonsList } from "components/layouts/RootLayout"
 
 import { RootState } from "redux/store"
-import { DEFAULT_POKEMONS_PER_REQUEST, IPokemonDetails } from "types"
+import { DEFAULT_POKEMONS_PER_REQUEST, IPokemonDetails, IPokemonsData } from "types"
 
 const SearchInput = dynamic(
     () => import('components/base/SearchInput'),
@@ -41,6 +41,24 @@ const BasicPokemonsList = dynamic(
 )
 
 const paginationPerPage = 10
+
+const fetchPokemonsList = async(
+    limit = DEFAULT_POKEMONS_PER_REQUEST,
+    nextUrl?: string,
+    onSuccess?:(data: IPokemonsData)=>void)=> {
+    if (process.env.NODE_ENV === 'development') {
+        await sleep()
+    }
+
+    const requestUrl = nextUrl ? nextUrl : `/pokemon/?limit=${limit}`
+    const result:AxiosResponse<IPokemonsData> = await axios.get(requestUrl)
+
+    if(result?.data && onSuccess) {
+        onSuccess(result.data)
+    } else if(result?.data) {
+        return result.data
+    }
+}
 
 const HomePage: NextPage = () => {
     const dispatch = useDispatch()
@@ -152,17 +170,33 @@ const HomePage: NextPage = () => {
     }
 
     const onDownloadAllDetails = async()=> {
-        setIsDownloading(true)
-        await fetchAllPokemonDetails().then(()=>{
-            setIsDownloading(false)})
+        setIsDownloadingContent(true)
+        await fetchAllPokemonDetails().finally(()=>{
+            setIsDownloadingContent(false)}
+        )
     }
 
-    const onGetMorePokemons = async ()=>{
-        const data = await fetchPokemonsList(DEFAULT_POKEMONS_PER_REQUEST, nextPokemonsUrl as string)
-        if(! data) return
+    const onGetPokemonsList = (data:IPokemonsData)=>{
         const { results,count,next,previous } = data
         dispatch(setPokemons(results))
         dispatch(setPokemonsMeta({ count,next,previous }))
+    }
+
+    const onFetchPokemons = async ()=>{
+        const requestFn = ! pokemons || pokemons.length === 0 ?
+            async ()=> await fetchPokemonsList(
+                DEFAULT_POKEMONS_PER_REQUEST,'', onGetPokemonsList
+            )
+            : async()=> await fetchPokemonsList(
+                DEFAULT_POKEMONS_PER_REQUEST, nextPokemonsUrl as string
+            )
+        setArePokemonsLoading(true)
+        const data = await requestFn()
+            .finally(()=>{setArePokemonsLoading(false)})
+        if(! data) {
+            return
+        }
+        onGetPokemonsList(data)
     }
 
     useEffect(() => {
@@ -175,6 +209,11 @@ const HomePage: NextPage = () => {
         setPaginationOffset((pageFromSearchParam - 1) * paginationPerPage)
     }, [pageFromSearchParam])
 
+    useEffect(() => {
+        // to fix race condition with axios initialization in RootLayout
+        setTimeout(() =>{ onFetchPokemons()},0)
+    }, [])
+
     return (
         <>
             <h1>Pokemons</h1>
@@ -183,10 +222,10 @@ const HomePage: NextPage = () => {
                 className="flex justify-center content-center max-w-xs mt-2 p-2 dark:text-black border
                         border-yellow-500 bg-yellow-200 rounded-lg duration-150 shadow-md
                         hover:bg-yellow-100 disabled:cursor-not-allowed"
-                disabled={isDownloading}
+                disabled={isDownloadingContent}
                 onClick={onDownloadAllDetails}
             >
-                {isDownloading &&
+                {isDownloadingContent &&
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -226,10 +265,11 @@ const HomePage: NextPage = () => {
 
             {online && nextPokemonsUrl &&
                     <button
-                        className="mt-6 px-4 py-2 max-w-xs border border-gray-800 dark:border-white rounded-lg duration-150
+                        disabled={arePokemonsLoading}
+                        className="flex justify-center content-center mt-6 px-4 py-2 max-w-xs border border-gray-800 dark:border-white rounded-lg duration-150
                             shadow-md hover:bg-gray-300 hover:dark:bg-neutral-700 disabled:cursor-not-allowed
                             disabled:hover:bg-transparent"
-                        onClick={onGetMorePokemons}
+                        onClick={onFetchPokemons}
                     >
                         {arePokemonsLoading &&
                             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
