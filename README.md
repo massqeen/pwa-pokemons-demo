@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-This is also a Progressive Web App built with [@ducanh2912/next-pwa](https://www.npmjs.com/package/@ducanh2912/next-pwa). Main features include:
+This is also a Progressive Web App built with [@ducanh2912/next-pwa](https://www.npmjs.com/package/@ducanh2912/next-pwa). 
+
+Deployed application [link](https://pwa-pokemons-demo.vercel.app/).
+
+Main features include:
 
     Offline-support with Service Worker using precaching as well as runtime caching (thanks to Workbox)
     
