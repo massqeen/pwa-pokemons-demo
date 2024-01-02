@@ -45,6 +45,32 @@ const withPWA = require("@ducanh2912/next-pwa").default({
                 },
             },
             {
+                urlPattern: ({ request, url: { pathname }, sameOrigin }) =>
+                    request.headers.get("RSC") === "1" &&
+                    sameOrigin &&
+                    !pathname.startsWith("/api/"),
+                handler: "CacheFirst",
+                options: {
+                    cacheName: "pages-rsc",
+                    expiration: {
+                        maxEntries: 1000,
+                        maxAgeSeconds: 48 * 60 * 60, // 48 hours
+                    },
+                },
+            },
+            {
+                urlPattern: ({ url: { pathname }, sameOrigin }) =>
+                    sameOrigin && !pathname.startsWith("/api/"),
+                handler: "CacheFirst",
+                options: {
+                    cacheName: "pages",
+                    expiration: {
+                        maxEntries: 1000,
+                        maxAgeSeconds: 48 * 60 * 60, // 48 hours
+                    },
+                },
+            },
+            {
                 urlPattern: ({ sameOrigin }) => !sameOrigin,
                 handler: "CacheFirst",
                 options: {
