@@ -1,5 +1,13 @@
 export const DEFAULT_POKEMONS_PER_REQUEST = 200
 
+// Dubai
+export const DEFAULT_MAP_CENTER: ICoords = {
+    lat: 25.2048,
+    lng: 55.2708,
+}
+
+export const DEFAULT_MAP_ZOOM = 17
+
 export interface IPokemonsMeta {
     count: number
     next: string | null
@@ -49,4 +57,14 @@ export interface IPokemonDetails {
     weight: number
     sprites: ISprite
     abilities: IAbility[]
+}
+
+export interface ICoords {
+    lng: number
+    lat: number
+}
+
+export interface IMap {
+    center: ICoords
+    zoom: number
 }

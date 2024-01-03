@@ -1,11 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { IAppState } from 'redux/types'
+import { IAppState, IGoogleMapsAPI } from 'redux/types'
 import { IPokemon, IPokemonsMeta } from "types"
 
 const initialState: IAppState = {
     pokemonsMeta:null,
-    pokemons:null
+    pokemons:null,
+    googleMapsAPI: {
+        isLoaded: false,
+        loadError: null,
+    },
 }
 
 export const appSlice = createSlice({
@@ -22,12 +26,19 @@ export const appSlice = createSlice({
         setPokemonsMeta: (state, { payload }: PayloadAction<IPokemonsMeta | null>) => {
             state.pokemonsMeta = payload
         },
+        setGoogleMapsAPI: (
+            state,
+            { payload }: PayloadAction<IGoogleMapsAPI>
+        ) => {
+            state.googleMapsAPI = payload
+        },
     },
 })
 
 export const {
     setPokemonsMeta,
-    setPokemons
+    setPokemons,
+    setGoogleMapsAPI,
 } = appSlice.actions
 
 export default appSlice.reducer
