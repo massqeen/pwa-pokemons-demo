@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { GoogleMap, LoadScriptNext } from '@react-google-maps/api'
 import { useDispatch, useSelector } from 'react-redux'
-import getConfig from 'next/config'
+import process from "process"
 
 import { useDebouncedCallback } from 'use-debounce'
 
@@ -14,7 +14,6 @@ import {
 import { ICoords, IMap } from 'types'
 import { RootState } from 'redux/store'
 
-const { publicRuntimeConfig } = getConfig()
 const defaultMapParams: IMap = {
     // Dubai
     center: {
@@ -92,7 +91,7 @@ const Map = ({
         return (
             <GoogleMap
                 options={mapOptions}
-                mapContainerStyle={{ width: '100%', }}
+                mapContainerStyle={{ width: '100%', minHeight: '94vh' }}
                 mapContainerClassName="map-container"
                 onLoad={onApiLoaded}
             />
@@ -102,7 +101,7 @@ const Map = ({
     const renderMapWithScriptLoader = () => {
         return (
             <LoadScriptNext
-                googleMapsApiKey={publicRuntimeConfig.googleMapsApiKey}
+                googleMapsApiKey={process.env.NEXT_PUBLIC_MAP_API_KEY ?? ''}
                 language={'en'}
                 region="ae"
                 libraries={googleMapsLibraries}
