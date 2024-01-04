@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
+import Link from "next/link"
 import dynamic from 'next/dynamic'
 import { usePathname, useSearchParams } from "next/navigation"
 import axios, { AxiosResponse } from "axios"
 import { NextPage } from "next"
 
 import useNetwork from "hooks/useNetwork"
+
 import { sleep } from "services/utils"
-
 import { setPokemons, setPokemonsMeta } from "redux/slicers/appSlice"
-
 import { fetchPokemonDetails } from "pages/details/pokemon/[pid]"
 
 import { RootState } from "redux/store"
@@ -286,6 +286,12 @@ const HomePage: NextPage = () => {
                         Load more
                     </button>
             }
+            <Link
+                href={'/location'}
+                className='mt-6'
+            >
+               Location
+            </Link>
         </>
     )
 }

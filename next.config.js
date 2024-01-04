@@ -82,6 +82,18 @@ const withPWA = require("@ducanh2912/next-pwa").default({
                     // networkTimeoutSeconds: 10, // fallback to cache if API does not response within 10 seconds
                 },
             },
+            {
+                urlPattern: ({ url: { pathname } }) =>
+                    pathname.includes("maps.googleapis.com"),
+                handler: "CacheFirst",
+                options: {
+                    cacheName: "maps",
+                    expiration: {
+                        maxEntries: 2000,
+                        maxAgeSeconds: 48 * 60 * 60, // 48 hours
+                    },
+                },
+            },
         ],
     },
 })

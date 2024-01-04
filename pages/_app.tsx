@@ -7,6 +7,7 @@ import type { NextPage } from 'next'
 import ReduxProvider from 'redux/provider'
 
 import RootLayout from 'components/layouts/RootLayout'
+import GoogleMapsLayout from "components/layouts/GoogleMapsLayout"
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -34,7 +35,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                 />
             </Head>
             <RootLayout>
-                <Component {...pageProps} />
+                <GoogleMapsLayout>
+                    <Component {...pageProps} />
+                </GoogleMapsLayout>
             </RootLayout>
         </ReduxProvider>
     )

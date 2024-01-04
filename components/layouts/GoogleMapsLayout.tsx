@@ -6,16 +6,8 @@ import { AnyAction, Dispatch } from 'redux'
 
 import { setGoogleMapsAPI } from 'redux/slicers/appSlice'
 
-export type GoogleMapsLibraryTypes = (
-    | 'core'
-    | 'maps'
-    | 'drawing'
-    | 'geometry'
-    | 'places'
-    | 'visualization'
-)[]
-
-export const googleMapsLibraries: Libraries = ['places']
+// export const googleMapsLibraries: Libraries = ['core','maps','routes','marker','places']
+export const googleMapsLibraries: Libraries = []
 
 export const onGoogleMapsAPILoaded = (dispatch: Dispatch<AnyAction>) => {
     dispatch(setGoogleMapsAPI({ isLoaded: true, loadError: null }))
@@ -51,7 +43,12 @@ const GoogleMapsLayout = memo(({ children }: PropsWithChildren) => {
         }
     }, [isGoogleMapsAPILoaded, googleMapsAPILoadError])
 
-    return <>{children}</>
+    return (
+        <>
+            {children}
+        </>
+    )
+
 })
 
 GoogleMapsLayout.displayName = 'GoogleMapsLayout'

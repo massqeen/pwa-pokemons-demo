@@ -26,6 +26,7 @@ const defaultMapParams: IMap = {
 interface IMapProps {
     mapCenter: ICoords
     mapZoom: number
+    isOffline?: boolean
     onZoomChange?: (zoom: number) => void
     onMapCenterChange?: (coords: ICoords) => void
 }
@@ -33,6 +34,7 @@ interface IMapProps {
 const Map = ({
     mapCenter,
     mapZoom,
+    isOffline = false,
     onZoomChange,
     onMapCenterChange,
 }: IMapProps) => {
@@ -52,7 +54,6 @@ const Map = ({
         const options: google.maps.MapOptions = {
             center: mapCenter,
             zoom: mapZoom,
-            styles: [],
         }
 
         return options
@@ -76,7 +77,18 @@ const Map = ({
     }, 100)
 
     const onApiLoaded = function (map: google.maps.Map) {
+        console.log('renderMap onApiLoaded')
         mapRef.current = map
+
+        console.log('disabling map POI')
+        map.setOptions({
+            styles: [
+                {
+                    featureType: "poi",
+                    stylers: [{ visibility: "off" }],
+                },
+            ]
+        })
 
         map.addListener('zoom_changed', function fn() {
             if (onZoomChange) {
@@ -88,10 +100,11 @@ const Map = ({
     }
 
     const renderMap = () => {
+        console.log('rendering map')
         return (
             <GoogleMap
                 options={mapOptions}
-                mapContainerStyle={{ width: '100%', minHeight: '94vh' }}
+                mapContainerStyle={{ width: '100%', minHeight: '90vh' }}
                 mapContainerClassName="map-container"
                 onLoad={onApiLoaded}
             />
@@ -128,6 +141,19 @@ const Map = ({
     useEffect(() => {
         mapCenterCoordsRef.current = { ...mapCenter }
     }, [mapCenter])
+
+    useEffect(() => {
+        const map = mapRef.current
+        if(! map) return
+
+        if(isOffline) {
+            map.setClickableIcons(false)
+            map.setOptions({ disableDefaultUI: true })
+        } else {
+            map.setClickableIcons(true)
+            map.setOptions({ disableDefaultUI: false })
+        }
+    }, [isOffline, mapRef.current])
 
     if (loadError) {
         return <div>Map cannot be loaded right now, sorry.</div>
