@@ -1,5 +1,7 @@
 export const DEFAULT_POKEMONS_PER_REQUEST = 200
 
+export const OPENSTREETMAP_URL_TEMPLATE = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+
 // Dubai
 export const DEFAULT_MAP_CENTER: ICoords = {
     lat: 25.2048,

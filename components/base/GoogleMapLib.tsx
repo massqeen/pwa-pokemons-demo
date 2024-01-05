@@ -11,16 +11,13 @@ import {
     onGoogleMapsAPILoaded,
 } from 'components/layouts/GoogleMapsLayout'
 
-import { ICoords, IMap } from 'types'
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, ICoords, IMap } from 'types'
 import { RootState } from 'redux/store'
 
 const defaultMapParams: IMap = {
     // Dubai
-    center: {
-        lat: 24.987404,
-        lng: 55.02177,
-    },
-    zoom: 18,
+    center: DEFAULT_MAP_CENTER,
+    zoom: DEFAULT_MAP_ZOOM,
 }
 
 interface IMapProps {
@@ -31,7 +28,7 @@ interface IMapProps {
     onMapCenterChange?: (coords: ICoords) => void
 }
 
-const Map = ({
+const GoogleMapLib = ({
     mapCenter,
     mapZoom,
     isOffline = false,
@@ -162,4 +159,4 @@ const Map = ({
     return isLoaded ? renderMap() : renderMapWithScriptLoader()
 }
 
-export default Map
+export default GoogleMapLib

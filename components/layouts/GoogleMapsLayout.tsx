@@ -6,8 +6,8 @@ import { AnyAction, Dispatch } from 'redux'
 
 import { setGoogleMapsAPI } from 'redux/slicers/appSlice'
 
-// export const googleMapsLibraries: Libraries = ['core','maps','routes','marker','places']
-export const googleMapsLibraries: Libraries = []
+export const googleMapsLibraries: Libraries = ['core','maps','routes','marker','places']
+// export const googleMapsLibraries: Libraries = []
 
 export const onGoogleMapsAPILoaded = (dispatch: Dispatch<AnyAction>) => {
     dispatch(setGoogleMapsAPI({ isLoaded: true, loadError: null }))

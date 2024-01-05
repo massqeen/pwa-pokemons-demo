@@ -4,8 +4,8 @@ import useNetwork from "hooks/useNetwork"
 
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from "types"
 
-const Map = dynamic(() => import('components/base/Map'), {
-    ssr: true,
+const Map = dynamic(() => import('components/base/LeafletMaps'), {
+    ssr: false,
     loading: () => null,
 })
 
