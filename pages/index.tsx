@@ -287,10 +287,10 @@ const HomePage: NextPage = () => {
                     </button>
             }
             <Link
-                href={'/location'}
+                href={'/location/google-maps'}
                 className='mt-6'
             >
-               Location
+                Location
             </Link>
         </>
     )

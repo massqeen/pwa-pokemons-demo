@@ -3,7 +3,7 @@ import ReactLeafletGoogleLayer from 'react-leaflet-google-layer'
 
 import { ICoords } from "types"
 
-interface IMapProps {
+export interface IMapProps {
     mapCenter: ICoords
     mapZoom: number
     isOffline?: boolean
@@ -11,7 +11,7 @@ interface IMapProps {
     onMapCenterChange?: (coords: ICoords) => void
 }
 
-function LeafletMaps({
+function LeafletGoogleMaps({
     mapCenter,
     mapZoom,
 }: IMapProps) {
@@ -49,4 +49,4 @@ function LeafletMaps({
     )
 }
 
-export default LeafletMaps
+export default LeafletGoogleMaps

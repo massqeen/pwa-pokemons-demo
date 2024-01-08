@@ -4,9 +4,9 @@ import { getStorageInfo, getStoredTilesAsJson } from 'leaflet.offline'
 
 import { OPENSTREETMAP_URL_TEMPLATE } from 'types'
 
-export default function storageLayer(baseLayer:any, layerswitcher:any) {
+export default function storageLayer(baseLayer:any, layerSwitcher:any) {
     let layer:any
-
+    console.log('storageLayer init, baseLayer, layerSwitcher:', baseLayer,layerSwitcher)
     const getGeoJsonData = () =>
         getStorageInfo(OPENSTREETMAP_URL_TEMPLATE).then((tiles) =>
             getStoredTilesAsJson(baseLayer.getTileSize(), tiles),
@@ -19,7 +19,8 @@ export default function storageLayer(baseLayer:any, layerswitcher:any) {
             // @ts-expect-error
                 (clickedLayer) => clickedLayer.feature.properties.key,
             )
-            layerswitcher.addOverlay(layer, 'offline tiles')
+            console.log('adding offline tiles overlay' )
+            layerSwitcher.addOverlay(layer, 'offline tiles')
         })
     }
 
