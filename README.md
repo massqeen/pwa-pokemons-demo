@@ -1,3 +1,5 @@
+This mini-project was created as a brief demonstration of PWA capabilities for one of my clients, showcasing how PWA technology can enhance the user experience with features such as offline functionality, responsiveness, and smooth performance.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 This is also a Progressive Web App built with [@ducanh2912/next-pwa](https://www.npmjs.com/package/@ducanh2912/next-pwa). 
 
